@@ -1,21 +1,25 @@
 import { getRandomItemFromArray, getSurroundingPoints } from "./Utils";
 import { BOARD_CELL_COUNT } from "./Constants";
 
+export interface GetShipPointsProps {
+  point: [number, number];
+  rotations?: number[];
+  availablePoints: Set<string>;
+  boardCellCounts: number;
+}
+
 export function getIShapedShipPoints({
   point: [i, j],
   rotations = [0, 90, 180, 270],
   availablePoints,
-}: {
-  point: [number, number];
-  rotations?: number[];
-  availablePoints: Set<string>;
-}): Set<string> {
+  boardCellCounts,
+}: GetShipPointsProps): Set<string> {
   const randomRotation = getRandomItemFromArray(rotations);
   let points;
 
   switch (randomRotation) {
     case 0:
-      if (j < 7) {
+      if (j < boardCellCounts - 3) {
         points = new Set([
           `${i}${j}`,
           `${i}${j + 1}`,
@@ -26,7 +30,7 @@ export function getIShapedShipPoints({
       break;
 
     case 90:
-      if (i < 6) {
+      if (i < boardCellCounts - 4) {
         points = new Set([
           `${i}${j}`,
           `${i + 1}${j}`,
@@ -73,6 +77,7 @@ export function getIShapedShipPoints({
       point: [i, j],
       rotations: rotations.filter((r) => r !== randomRotation),
       availablePoints,
+      boardCellCounts,
     });
   }
 }
@@ -81,17 +86,14 @@ export function getLShapedShipPoints({
   point: [i, j],
   rotations = [0, 90, 180, 270],
   availablePoints,
-}: {
-  point: [number, number];
-  rotations?: number[];
-  availablePoints: Set<string>;
-}): Set<string> {
+  boardCellCounts,
+}: GetShipPointsProps): Set<string> {
   const randomRotation = getRandomItemFromArray(rotations);
   let points;
 
   switch (randomRotation) {
     case 0:
-      if (j < 8 && i < 9) {
+      if (j < boardCellCounts - 2 && i < boardCellCounts - 1) {
         points = new Set([
           `${j}${i}`,
           `${j + 1}${i}`,
@@ -102,7 +104,7 @@ export function getLShapedShipPoints({
       break;
 
     case 90:
-      if (j > 0 && i < 8) {
+      if (j > 0 && i < boardCellCounts - 2) {
         points = new Set([
           `${j}${i}`,
           `${j}${i + 1}`,
@@ -124,7 +126,7 @@ export function getLShapedShipPoints({
       break;
 
     case 270:
-      if (j < 9 && i > 1) {
+      if (j < boardCellCounts - 1 && i > 1) {
         points = new Set([
           `${j}${i}`,
           `${j}${i - 1}`,
@@ -149,6 +151,7 @@ export function getLShapedShipPoints({
       point: [i, j],
       rotations: rotations.filter((r) => r !== 270),
       availablePoints,
+      boardCellCounts,
     });
   }
 }

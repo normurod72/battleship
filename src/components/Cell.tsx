@@ -1,22 +1,29 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 interface CellProps {
-  type?: "empty" | "ship" | "miss" | "hit";
   text?: string;
+  isShipPoint?: boolean;
+  isHitPoint?: boolean;
 }
 
-const CellConfig = {
-  empty: "GAINSBORO",
-  ship: "teal",
-  miss: "GRAY",
-  hit: "red",
-};
+export function Cell({ text, isHitPoint, isShipPoint }: CellProps) {
+  const getCellColor = useCallback(() => {
+    if (isShipPoint && isHitPoint) {
+      return "red";
+    }
+    if (isShipPoint) {
+      return "teal";
+    }
+    if (isHitPoint) {
+      return "gray";
+    }
+    return "gainsboro";
+  }, [isShipPoint, isHitPoint]);
 
-export function Cell({ type = "empty", text }: CellProps) {
   return (
     <div
       style={{
-        backgroundColor: CellConfig[type],
+        backgroundColor: getCellColor(),
         border: "1px solid #fff",
         display: "flex",
         alignItems: "center",

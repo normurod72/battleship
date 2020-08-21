@@ -1,5 +1,5 @@
-export function getRandomItemFromArray<T>(value: Array<T>): T {
-  return value[Math.floor(Math.random() * 100) % value.length];
+export function getRandomItemFromArray<T>(value: Array<T>, seed = 100): T {
+  return value[Math.floor(Math.random() * seed) % value.length];
 }
 
 export function isValidGridPoint([i, j]: [number, number], gridSize: number) {

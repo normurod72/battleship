@@ -5,35 +5,31 @@ import React, {
   useCallback,
   useRef,
 } from "react";
+
 import { getRandomItemFromArray } from "./shared/Utils";
-import { getBoardPoints } from "./shared/Constants";
-import { getShipPointsWithSurroundings } from "./shared/Ships";
+import { getBoardPoints, BOARD_CELL_COUNT } from "./shared/Constants";
+import {
+  getShipPointsWithSurroundings,
+  GetShipPointsProps,
+} from "./shared/Ships";
 
-export interface GetShipPointsProps {
-  point: [number, number];
-  rotations?: number[];
-  availablePoints: Set<string>;
-}
-
-interface AppContextState {
+interface GameContext {
   boardPoints: Array<[number, number]>;
-  allShipsPointsSet: Set<string>;
+  allShipsPoints: Set<string>;
   addShip: (getShipPoints: (props: GetShipPointsProps) => Set<string>) => void;
 }
 
-const Context = React.createContext<AppContextState | null>(null);
+const Context = React.createContext<GameContext | null>(null);
 Context.displayName = "AppContext";
 
-export function useAppContext() {
-  return React.useContext(
-    Context as React.Context<NonNullable<AppContextState>>
-  );
+export function useGameContext() {
+  return React.useContext(Context as React.Context<NonNullable<GameContext>>);
 }
 
-export function AppContextProvider({ children }: PropsWithChildren<unknown>) {
+export function GameContextProvider({ children }: PropsWithChildren<unknown>) {
   const boardPoints = useMemo(() => getBoardPoints(), []);
   const availablePoints = useRef(boardPoints);
-  const [allShipsPointsSet, setAllShipsPointsSet] = useState<Set<string>>(
+  const [allShipsPoints, setAllShipsPoints] = useState<Set<string>>(
     new Set([])
   );
 
@@ -45,9 +41,10 @@ export function AppContextProvider({ children }: PropsWithChildren<unknown>) {
         availablePoints: new Set(
           availablePoints.current.map((x) => x.join(""))
         ),
+        boardCellCounts: BOARD_CELL_COUNT,
       });
 
-      setAllShipsPointsSet(
+      setAllShipsPoints(
         (prev) => new Set(Array.from(prev).concat(Array.from(shipPoints)))
       );
 
@@ -63,7 +60,7 @@ export function AppContextProvider({ children }: PropsWithChildren<unknown>) {
   );
 
   return (
-    <Context.Provider value={{ boardPoints, addShip, allShipsPointsSet }}>
+    <Context.Provider value={{ boardPoints, addShip, allShipsPoints }}>
       {children}
     </Context.Provider>
   );

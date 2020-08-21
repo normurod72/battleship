@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 
 import { Cell } from "./Cell";
 import {
@@ -9,42 +9,47 @@ import {
 
 interface BoardProps {
   shipsPoints?: Set<string>;
-  hitPoints?: Set<string>;
+  touchedPoints?: Set<string>;
+  cover?: React.ReactNode;
 }
 
-export function Board({ shipsPoints, hitPoints }: BoardProps) {
+export function Board({ shipsPoints, touchedPoints, cover }: BoardProps) {
   const boardPoints = useMemo(() => getBoardPoints(), []);
-
-  const getCellType = useCallback(
-    (point: string) => {
-      const isShipPoint = shipsPoints?.has(point);
-      const isHitPoint = hitPoints?.has(point);
-
-      if (isShipPoint && isHitPoint) {
-        return "hit";
-      }
-      if (isShipPoint) {
-        return "ship";
-      }
-      if (isHitPoint) {
-        return "miss";
-      }
-      return "empty";
-    },
-    [hitPoints, shipsPoints]
-  );
 
   return (
     <div
       style={{
+        position: "relative",
         display: "grid",
         gridTemplateColumns: `repeat(${BOARD_CELL_COUNT}, ${BOARD_CELL_SIZE}px)`,
         gridTemplateRows: `repeat(${BOARD_CELL_COUNT}, ${BOARD_CELL_SIZE}px)`,
       }}
     >
       {boardPoints.map(([i, j]) => (
-        <Cell key={`${i}_${j}`} type={getCellType(`${i}${j}`)} />
+        <Cell
+          key={`${i}_${j}`}
+          isShipPoint={shipsPoints?.has(`${i}${j}`)}
+          isHitPoint={touchedPoints?.has(`${i}${j}`)}
+        />
       ))}
+
+      {!!cover && (
+        <div
+          style={{
+            position: "absolute",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgb(0 0 0 / 87%)",
+            color: "aquamarine",
+            fontSize: 72,
+          }}
+        >
+          {cover}
+        </div>
+      )}
     </div>
   );
 }

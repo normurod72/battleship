@@ -1,7 +1,7 @@
 export const BOARD_CELL_COUNT = 10;
-export const BOARD_CELL_SIZE = 50;
+export const BOARD_CELL_SIZE = 50; // in pixels, height=width
 
-export function getBoardPoints(): Array<[number, number]> {
+export function getBoardPoints() {
   const points: Array<[number, number]> = [];
 
   for (let i = 0; i < BOARD_CELL_COUNT; i++) {
